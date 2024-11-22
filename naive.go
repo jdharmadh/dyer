@@ -23,3 +23,20 @@ func ks(j, w int, dp [][]int, weight []int) int {
 
 	return dp[j][w]
 }
+
+func NaiveDPKnapsack(weights []int, capacity int) int {
+	n := len(weights)
+
+	// Initialize DP table with -1 (indicating uncomputed values)
+	dp := make([][]int, n+1)
+	for i := 0; i <= n; i++ {
+		dp[i] = make([]int, capacity+2)
+		for j := 0; j <= capacity+1; j++ {
+			dp[i][j] = -1
+		}
+	}
+
+	// Base case: 1 way to achieve 0 capacity with 0 items
+	dp[0][0] = 1
+	return ks(n, capacity, dp, weights)
+}
