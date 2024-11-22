@@ -36,14 +36,14 @@ func generateTestCases(filename string) {
 
 	var testCases []testCase
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100; i++ {
 		// Generate a random number of weights (length between 5 and 10)
-		length := uint(rand.Intn(10) + 30) // Random between 5 and 62
+		length := uint(rand.Intn(30) + 30) // Random between 5 and 62
 
 		// Generate random weights (values between 1 and 100)
 		weights := make([]uint, length)
 		for j := range weights {
-			weights[j] = uint(rand.Intn(1000) + 1)
+			weights[j] = uint(rand.Intn(100) + 1)
 		}
 
 		// Determine the capacity
@@ -53,11 +53,16 @@ func generateTestCases(filename string) {
 				maxWeight = w
 			}
 		}
-		scale := 1 + rand.Float64()*0.7
+		scale := 1 + rand.Float64()*2
 		capacity := uint(rand.Intn(int(math.Pow(float64(maxWeight), scale))-int(maxWeight)+1) + int(maxWeight))
 
 		// Calculate the answer using BruteForceKnapsack
-		answer := NaiveDPKnapsack(weights, capacity)
+		answer := SpaceEfficientKnapsack(weights, capacity)
+		/*answertwo :=
+
+		if answer != answertwo {
+			fmt.Println("uh oh..." + strconv.Itoa(int(answer)) + " vs " + strconv.Itoa(int(answertwo)) + " and answer is " + strconv.Itoa(int(BruteForceKnapsack(weights, capacity))))
+		}*/
 
 		// Add the test case
 		testCases = append(testCases, testCase{

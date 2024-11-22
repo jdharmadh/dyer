@@ -44,3 +44,39 @@ func NaiveDPKnapsack(weights []uint, capacity uint) uint {
 	dp[0][0] = 1
 	return ks(n, capacity, dp, weights, visited)
 }
+
+func SpaceEfficientKnapsack(weights []uint, capacity uint) uint {
+	n := len(weights)
+	if n == 0 {
+		return 0
+	}
+
+	// We only need two rows: previous and current
+	dp := make([][]uint, 2)
+	dp[0] = make([]uint, capacity+1)
+	dp[1] = make([]uint, capacity+1)
+
+	// Base case: one way to fill a knapsack of any capacity with no items
+	for w := uint(0); w <= capacity; w++ {
+		dp[0][w] = 1
+	}
+
+	// Fill the dp table bottom up, considering each item
+	for i := 1; i <= n; i++ {
+		curr := i & 1
+		prev := (i - 1) & 1
+
+		for w := uint(0); w <= capacity; w++ {
+			// Start with ways without current item
+			dp[curr][w] = dp[prev][w]
+
+			// If we can include the current item, add those possibilities
+			if w >= weights[i-1] {
+				dp[curr][w] += dp[prev][w-weights[i-1]]
+			}
+		}
+	}
+
+	// Return the final result
+	return dp[n&1][capacity]
+}
