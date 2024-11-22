@@ -1,13 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
+	generateTestCases("test_data.txt")
 	testcases, err := readTestData("test_data.txt")
 	if err == nil {
 		for _, problem := range testcases {
-			fmt.Println(NaiveDPKnapsack(problem.Weights, problem.Capacity))
-			fmt.Println(BruteForceKnapsack(problem.Weights, problem.Capacity))
+			if NaiveDPKnapsack(problem.Weights, problem.Capacity) != problem.Answer {
+				fmt.Println(problem)
+			}
+			//fmt.Println(BruteForceKnapsack(problem.Weights, problem.Capacity))
 		}
 	}
 

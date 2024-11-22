@@ -8,11 +8,14 @@ import (
 	"strings"
 )
 
-// Function to read test data from a .txt file
-func readTestData(filename string) ([]struct {
-	Capacity int
-	Weights  []int
-}, error) {
+type testCase struct {
+	Capacity uint
+	Weights  []uint
+	Answer   uint
+}
+
+// Function to read test data and answers from a .txt file
+func readTestData(filename string) ([]testCase, error) {
 	// Open the file
 	file, err := os.Open(filename)
 	if err != nil {
@@ -29,22 +32,23 @@ func readTestData(filename string) ([]struct {
 	}
 
 	// Create a slice to store the test cases
-	var testCases []struct {
-		Capacity int
-		Weights  []int
-	}
+	var testCases []testCase
 
 	// Read each test case
 	for i := 0; i < numTestCases; i++ {
-		// Read the first line (length of weights and capacity)
+		// Read the first line (length of weights, capacity, and answer)
 		scanner.Scan()
 		line := scanner.Text()
 		parts := strings.Fields(line)
-		/*numWeights, err := strconv.Atoi(parts[0])
+		numWeights, err := strconv.Atoi(parts[0])
 		if err != nil {
 			return nil, err
-		}*/
+		}
 		capacity, err := strconv.Atoi(parts[1])
+		if err != nil {
+			return nil, err
+		}
+		answer, err := strconv.Atoi(parts[2])
 		if err != nil {
 			return nil, err
 		}
@@ -53,43 +57,27 @@ func readTestData(filename string) ([]struct {
 		scanner.Scan()
 		weightsLine := scanner.Text()
 		weightsParts := strings.Fields(weightsLine)
-		var weights []int
+		var weights []uint
 		for _, weightStr := range weightsParts {
 			weight, err := strconv.Atoi(weightStr)
 			if err != nil {
 				return nil, err
 			}
-			weights = append(weights, weight)
+			weights = append(weights, uint(weight))
 		}
 
 		// Add the test case to the slice
-		testCases = append(testCases, struct {
-			Capacity int
-			Weights  []int
-		}{Capacity: capacity, Weights: weights})
+		if len(weights) != numWeights {
+			return nil, fmt.Errorf("mismatched weights count: expected %d, got %d", numWeights, len(weights))
+		}
+		testCases = append(testCases, testCase{Capacity: uint(capacity), Weights: weights, Answer: uint(answer)})
 	}
 
 	return testCases, nil
 }
 
-func read() {
-	// Read test data from "test_data.txt"
-	testCases, err := readTestData("test_data.txt")
-	if err != nil {
-		fmt.Println("Error reading data:", err)
-	} else {
-		fmt.Println("Test data read successfully.")
-		for _, testCase := range testCases {
-			fmt.Printf("Capacity: %d, Weights: %v\n", testCase.Capacity, testCase.Weights)
-		}
-	}
-}
-
-// Function to write test data to a .txt file
-func writeTestData(filename string, testCases []struct {
-	Capacity int
-	Weights  []int
-}) error {
+// Function to write test data and answers to a .txt file
+func writeTestData(filename string, testCases []testCase) error {
 	// Create or open the file
 	file, err := os.Create(filename)
 	if err != nil {
@@ -105,8 +93,8 @@ func writeTestData(filename string, testCases []struct {
 
 	// Write data for each test case
 	for _, testCase := range testCases {
-		// Write the length of the weights table and the capacity
-		_, err = file.WriteString(fmt.Sprintf("%d %d\n", len(testCase.Weights), testCase.Capacity))
+		// Write the length of the weights table, capacity, and the answer
+		_, err = file.WriteString(fmt.Sprintf("%d %d %d\n", len(testCase.Weights), testCase.Capacity, testCase.Answer))
 		if err != nil {
 			return err
 		}
@@ -119,23 +107,4 @@ func writeTestData(filename string, testCases []struct {
 	}
 
 	return nil
-}
-
-func write() {
-	// Example test data
-	testCases := []struct {
-		Capacity int
-		Weights  []int
-	}{
-		{40, []int{10, 20, 30, 40}},
-		{50, []int{5, 10, 15, 20, 25}},
-	}
-
-	// Write test data to "test_data.txt"
-	err := writeTestData("test_data.txt", testCases)
-	if err != nil {
-		fmt.Println("Error writing data:", err)
-	} else {
-		fmt.Println("Test data written successfully.")
-	}
 }
