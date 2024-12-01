@@ -26,7 +26,7 @@ func ks(j uint, w uint, dp [][]uint, weight []uint, visited [][]uint) uint {
 	return dp[j][w]
 }
 
-func NaiveDPKnapsack(weights []uint, capacity uint) uint {
+func KnapsackTable(weights []uint, capacity uint) [][]uint {
 	n := uint(len(weights))
 	// Initialize DP table with -1 (indicating uncomputed values)
 	dp := make([][]uint, n+1)
@@ -42,7 +42,13 @@ func NaiveDPKnapsack(weights []uint, capacity uint) uint {
 
 	// Base case: 1 way to achieve 0 capacity with 0 items
 	dp[0][0] = 1
-	return ks(n, capacity, dp, weights, visited)
+	ks(n, capacity, dp, weights, visited)
+	return dp
+}
+
+func NaiveDPKnapsack(weights []uint, capacity uint) uint {
+	table := KnapsackTable(weights, capacity)
+	return table[len(weights)][capacity]
 }
 
 func SpaceEfficientKnapsack(weights []uint, capacity uint) uint {
