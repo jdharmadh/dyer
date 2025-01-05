@@ -1,3 +1,3 @@
-module github.com/jayd1903/dyer
+module github.com/jdharmadh/dyer
 
 go 1.23.3
